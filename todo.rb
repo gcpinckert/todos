@@ -61,6 +61,7 @@ end
 
 # Display a single Todo List
 get "/lists/:number" do
-  @name = session[params[:number]git][:name]
+  list_num = params[:number].to_i
+  @list = session[:lists][list_num]
   erb :list_todos, layout: :layout
 end
