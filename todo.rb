@@ -1,6 +1,16 @@
 require "sinatra"
 require "sinatra/reloader"
+require "sinatra/content_for"
 require "tilt/erubis"
+
+=begin
+# session[:lists] data structure:
+[
+  { name: "list one", todos: [] }
+  { name: "list two", todos: [] }
+  # ... etc
+]
+=end
 
 configure do
   enable :sessions
@@ -48,4 +58,11 @@ post "/lists" do
     session[:success] = "The list has been created."
     redirect "/lists"
   end
+end
+
+# Display a single Todo List
+get "/lists/:number" do
+  list_num = params[:number].to_i
+  @list = session[:lists][list_num]
+  erb :list_todos, layout: :layout
 end
