@@ -66,3 +66,27 @@ get "/lists/:number" do
   @list = session[:lists][list_num]
   erb :list_todos, layout: :layout
 end
+
+# Render the Edit List form
+get "/lists/:number/edit" do
+  list_num = params[:number].to_i
+  @list = session[:lists][list_num]
+  erb :edit_list, layout: :layout
+end
+
+# Edit existing list name
+post "/lists/:number" do
+  list_num = params[:number].to_i
+  @list = session[:lists][list_num]
+  new_list_name = params[:list_name].strip
+  error = error_for_list_name(new_list_name)
+
+  if error
+    session[:error] = error
+    erb :edit_list, layout: :layout
+  else
+    @list[:name] = new_list_name
+    session[:success] = "The list name has been changed."
+    redirect "/lists/#{list_num}"
+  end
+end
