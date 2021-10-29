@@ -90,3 +90,11 @@ post "/lists/:number" do
     redirect "/lists/#{list_num}"
   end
 end
+
+# Delete existing list
+post "/lists/:number/delete" do
+  list_num = params[:number].to_i
+  session[:lists].delete_at(list_num)
+  session[:success] = "This list has been deleted."
+  redirect "/lists"
+end
