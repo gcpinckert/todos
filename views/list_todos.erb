@@ -3,7 +3,7 @@
     <h2><%= @list[:name] %></h2>
     <ul>
       <li>
-        <a href="/lists/<%= params[:number] %>/edit" class="edit">Edit List</a>
+        <a href="/lists/<%= @list_num %>/edit" class="edit">Edit List</a>
       </li>
     </ul>
   </header>
@@ -17,13 +17,13 @@
 </ul>
 </section>
 
-<form action="/lists/<%= params[:number] %>/todos" method="post">
+<form action="/lists/<%= @list_num %>/todos" method="post">
   <dl>
     <dt>
       <label for="todo">Enter a new todo item:</label>
     </dt>
     <dd>
-      <input name="todo" id="todo" placeholder="Something to do" type="text" value="">
+      <input name="todo" id="todo" placeholder="Something to do" type="text" value="<%= params[:todo] %>">
     </dd>
   </dl>
   <fieldset class="actions">

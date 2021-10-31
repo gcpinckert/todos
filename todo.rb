@@ -62,22 +62,22 @@ end
 
 # Display a single Todo List
 get "/lists/:number" do
-  list_num = params[:number].to_i
-  @list = session[:lists][list_num]
+  @list_num = params[:number].to_i
+  @list = session[:lists][@list_num]
   erb :list_todos, layout: :layout
 end
 
 # Render the Edit List form
 get "/lists/:number/edit" do
-  list_num = params[:number].to_i
-  @list = session[:lists][list_num]
+  @list_num = params[:number].to_i
+  @list = session[:lists][@list_num]
   erb :edit_list, layout: :layout
 end
 
 # Edit existing list name
 post "/lists/:number" do
-  list_num = params[:number].to_i
-  @list = session[:lists][list_num]
+  @list_num = params[:number].to_i
+  @list = session[:lists][@list_num]
   new_list_name = params[:list_name].strip
   error = error_for_list_name(new_list_name)
 
@@ -87,27 +87,27 @@ post "/lists/:number" do
   else
     @list[:name] = new_list_name
     session[:success] = "The list name has been changed."
-    redirect "/lists/#{list_num}"
+    redirect "/lists/#{@list_num}"
   end
 end
 
 # Delete existing list
 post "/lists/:number/delete" do
-  list_num = params[:number].to_i
-  session[:lists].delete_at(list_num)
+  @list_num = params[:number].to_i
+  session[:lists].delete_at(@list_num)
   session[:success] = "This list has been deleted."
   redirect "/lists"
 end
 
-# return an error if todo is invalid, else nil
+# Return an error if todo is invalid, else nil
 def error_for_todo(name)
-  "Todo must be between 1 and 100 characters" unless (1..100).cover? name.size
+  "Todo must be between 1 and 100 characters." unless (1..100).cover? name.size
 end
 
 # Add new todo to a list
-post "/lists/:number/todos" do
-  list_num = params[:number].to_i
-  @list = session[:lists][list_num]
+post "/lists/:list_num/todos" do
+  @list_num = params[:list_num].to_i
+  @list = session[:lists][@list_num]
   text = params[:todo].strip
   
   error = error_for_todo(text)
@@ -117,7 +117,7 @@ post "/lists/:number/todos" do
   else
     @list[:todos] << { name: text, completed: false }
     @todos = @list[:todos]
-    session[:success] = "The todo was added"
-    redirect "/lists/#{list_num}"
+    session[:success] = "The todo was added."
+    redirect "/lists/#{@list_num}"
   end
 end
