@@ -6,8 +6,8 @@ require "tilt/erubis"
 =begin
 # session[:lists] data structure:
 [
-  { name: "list one", todos: [] }
-  { name: "list two", todos: [] }
+  { name: "list one", todos: [ {name: "a", completed: false}, { name: "b", completed: true } ] }
+  { name: "list two", todos: [ {name: "a", completed: false}, { name: "b", completed: true } ] }
   # ... etc
 ]
 =end
@@ -97,4 +97,27 @@ post "/lists/:number/delete" do
   session[:lists].delete_at(list_num)
   session[:success] = "This list has been deleted."
   redirect "/lists"
+end
+
+# return an error if todo is invalid, else nil
+def error_for_todo(name)
+  "Todo must be between 1 and 100 characters" unless (1..100).cover? name.size
+end
+
+# Add new todo to a list
+post "/lists/:number/todos" do
+  list_num = params[:number].to_i
+  @list = session[:lists][list_num]
+  text = params[:todo].strip
+  
+  error = error_for_todo(text)
+  if error
+    session[:error] = error
+    erb :list_todos, layout: :layout
+  else
+    @list[:todos] << { name: text, completed: false }
+    @todos = @list[:todos]
+    session[:success] = "The todo was added"
+    redirect "/lists/#{list_num}"
+  end
 end
