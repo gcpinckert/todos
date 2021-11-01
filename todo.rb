@@ -19,16 +19,19 @@ end
 
 helpers do
   def all_todos_complete?(list)
-    list[:todos].all? { |todo| todo[:completed] } &&
-    list[:todos].size > 0
+    incomplete_todos_count(list) == 0 && total_todos(list) > 0
+  end
+
+  def list_class(list)
+    "complete" if all_todos_complete?(list)
   end
 
   def incomplete_todos_count(list)
     list[:todos].reject { |todo| todo[:completed] }.size
   end
 
-  def list_class(list)
-    "complete" if all_todos_complete?(list)
+  def total_todos(list)
+    list[:todos].size
   end
 end
 
