@@ -15,7 +15,7 @@
 
   <ul>
   <% sorted_todos(@list[:todos]) do |todo, index| %>
-    <li class="<%= 'complete' if todo[:completed] %>">
+    <li class="<%== 'complete' if todo[:completed] %>">
       <form action="/lists/<%= @list_num %>/todos/<%= index %>" method="post" class="check">
         <input type="hidden" name="completed" value="<%= !todo[:completed] %>" />
         <button type="submit">Complete</button>
