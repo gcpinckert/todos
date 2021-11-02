@@ -17,6 +17,10 @@ configure do
   set :session_secret, 'secret'
 end
 
+configure do
+  set :erb, :escape_html => true
+end
+
 helpers do
   def all_todos_complete?(list)
     incomplete_todos_count(list) == 0 && total_todos(list) > 0
