@@ -94,24 +94,34 @@ post "/lists" do
   end
 end
 
+# Return the correct list if params are valid
+def get_list(index)
+  if !(0...session[:lists].size).cover? index
+    session[:error] = "The specified list was not found."
+    redirect "/lists"
+  end
+
+  session[:lists][index]
+end
+
 # Display a single Todo List
 get "/lists/:number" do
   @list_num = params[:number].to_i
-  @list = session[:lists][@list_num]
+  @list = get_list(@list_num)
   erb :list_todos, layout: :layout
 end
 
 # Render the Edit List form
 get "/lists/:number/edit" do
   @list_num = params[:number].to_i
-  @list = session[:lists][@list_num]
+  @list = get_list(@list_num)
   erb :edit_list, layout: :layout
 end
 
 # Edit existing list name
 post "/lists/:number" do
   @list_num = params[:number].to_i
-  @list = session[:lists][@list_num]
+  @list = get_list(@list_num)
   new_list_name = params[:list_name].strip
   error = error_for_list_name(new_list_name)
 
@@ -141,7 +151,7 @@ end
 # Add new todo to a list
 post "/lists/:list_num/todos" do
   @list_num = params[:list_num].to_i
-  @list = session[:lists][@list_num]
+  @list = get_list(@list_num)
   text = params[:todo].strip
   
   error = error_for_todo(text)
@@ -160,7 +170,7 @@ end
 post "/lists/:list_num/todos/:todo_num/delete" do
   @list_num = params[:list_num].to_i
   todo_num = params[:todo_num].to_i
-  @list = session[:lists][@list_num]
+  @list = get_list(@list_num)
 
   @list[:todos].delete_at(todo_num)
   session[:success] = "The todo has been deleted."
@@ -171,7 +181,7 @@ end
 post "/lists/:list_num/todos/:todo_num" do
   @list_num = params[:list_num].to_i
   todo_num = params[:todo_num].to_i
-  @list = session[:lists][@list_num]
+  @list = get_list(@list_num)
   completed = (params[:completed] == "true")
 
   @list[:todos][todo_num][:completed] = completed
@@ -182,7 +192,7 @@ end
 # Completes all todos in a list
 post "/lists/:number/complete_all" do
   @list_num = params[:number].to_i
-  @list = session[:lists][@list_num]
+  @list = get_list(@list_num)
   
   @list[:todos].each do |todo|
     todo[:completed] = true
