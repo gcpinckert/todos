@@ -144,10 +144,10 @@ post "/lists/:id/delete" do
 
   @storage.delete_list(id)
   
+  session[:success] = "The list has been deleted."
   if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
     "/lists"
   else
-    session[:success] = "This list has been deleted."
     redirect "/lists"
   end
 end
