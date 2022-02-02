@@ -10,6 +10,10 @@ class DatabasePersistence
     @logger = logger
   end
 
+  def disconnect
+    @db.close
+  end
+
   # make private method?
   def query(statement, *params)
     @logger.info "#{statement}: #{params}"
