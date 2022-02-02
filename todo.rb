@@ -130,13 +130,15 @@ post "/lists/:id" do
     session[:error] = error
     erb :edit_list, layout: :layout
   else
-    @storage.update_list_name(list_num, new_list_name)
+    @storage.update_list_name(id, new_list_name)
     session[:success] = "The list name has been changed."
     redirect "/lists/#{@list[:id]}"
   end
 end
 
 # Delete existing list
+# This deletes the list fine but doesn't return lists page like it should
+# Need to fix
 post "/lists/:id/delete" do
   id = params[:id].to_i
 
