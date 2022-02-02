@@ -6,6 +6,7 @@ class DatabasePersistence
     @logger = logger
   end
 
+  # make private method?
   def query(statement, *params)
     @logger.info "#{statement}: #{params}"
     @db.exec_params(statement, params)
@@ -15,16 +16,19 @@ class DatabasePersistence
     sql = "SELECT * FROM lists WHERE id = $1;"
     result = query(sql, id)
     tuple = result.first
-    { id: tuple["id"], name: tuple["name"], todos: []}
+    { id: tuple["id"].to_i, 
+      name: tuple["name"], 
+      todos: list_todos(tuple["id"]) }
   end
 
   def all_lists
     sql = "SELECT * FROM lists;"
     result = query(sql)
 
-    # Format: [ {id:, name:, todos:}, ...etc ]
     result.map do |tuple|
-      { id: tuple["id"], name: tuple["name"], todos: []}
+      { id: tuple["id"].to_i, 
+        name: tuple["name"], 
+        todos: list_todos(tuple["id"]) }
     end
   end
 
@@ -65,5 +69,21 @@ class DatabasePersistence
     # list[:todos].each do |todo|
     #   todo[:completed] = true
     # end
+  end
+
+  private
+
+  def list_todos(list_id)
+    sql = "SELECT * FROM todos WHERE list_id = $1"
+    result = query(sql, list_id)
+    result.map do |tuple|
+      { id: tuple["id"].to_i, 
+        name: tuple["name"], 
+        completed: convert_to_bool(tuple["completed"]) }
+    end
+  end
+
+  def convert_to_bool(str)
+    str == 't'
   end
 end
