@@ -42,7 +42,7 @@ helpers do
 end
 
 before do
-  @storage = DatabasePersistence.new
+  @storage = DatabasePersistence.new(logger)
 end
 
 # Return an error message if the list name is invalid, else nil
